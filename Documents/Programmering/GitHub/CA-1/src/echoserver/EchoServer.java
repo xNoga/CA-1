@@ -95,7 +95,8 @@ public class EchoServer extends Thread{
     }
     
     public void send(String user, String msg){
-        String message = "<" + user + ">" + " " + msg;
+        
+        String message = "MESSAGE"+"#" + user + "#"  + msg;
         for (Map.Entry<String, ClientHandler> entry : clients.entrySet() ) {
             entry.getValue().send(message);
         }    
@@ -122,8 +123,9 @@ public class EchoServer extends Thread{
             Log.setLogFile("logFile.txt", "ServerLog");
             //String ip = args[0];
             //int port = Integer.parseInt(args[1]);
-            String ip = "localhost"; // ændret her -----------------!!!!!!!!!!!!!!!!!!!!!
-           
+            String test = "send#hej";
+            String ip = "localhost"; // skal ændres til 10.0.0.4
+            System.out.println(test.substring(0, 4));
             int port = 9999;
             new EchoServer().runServer(ip, port);
             System.out.println(ip.length());

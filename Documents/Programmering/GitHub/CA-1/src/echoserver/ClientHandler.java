@@ -30,7 +30,7 @@ public class ClientHandler extends Thread {
 
     EchoServer es;
 
-    public ClientHandler(Socket socket, EchoServer es) throws IOException {
+    public ClientHandler(Socket socket, EchoServer es) throws IOException, RuntimeException {
         this.es = es;
         this.socket = socket;
         input = new Scanner(socket.getInputStream());
@@ -44,8 +44,13 @@ public class ClientHandler extends Thread {
     public void conInfo(ArrayList<String> clients, String user) {
         writer.println(user + " has connected to the server.");
         writer.print("USERS# ");
-        for (String f : clients) {
-            writer.print(f + ", ");
+        for (int index = 0; index < clients.size(); index++) {
+            String currElement = clients.get(index);
+            if (index == clients.size() -1) {
+                writer.print(currElement + ".");
+            } else {
+                writer.print(currElement + ", ");
+            }
         }
         writer.println("\n");
 
@@ -68,15 +73,13 @@ public class ClientHandler extends Thread {
             writer.println("Please login by typing 'user#yourname'");
             String message = input.nextLine(); //IMPORTANT blocking call
             if (message.length() < 5) {
-                //writer.println("You must login by typing 'user#yourname'");
                 run();
             }
             if (message.substring(0, 5).equalsIgnoreCase("user#")) {
                 user = message.substring(5, message.length());
                 es.addUser(user, this);
 
-            } else {
-                // writer.println("You must login by typing 'user#yourname'");
+            } else {               
                 run();
             }
             message = "";
@@ -85,11 +88,22 @@ public class ClientHandler extends Thread {
                 // es.send(user, message);
                 System.out.println(String.format("Received the message: %1$S ", message.toUpperCase()));
                 message = input.nextLine(); //IMPORTANT blocking call
-                if (message.length() >= 7 && message.equalsIgnoreCase("LOGOUT#")) {
+//                if (message.length() >= 7 && message.equalsIgnoreCase("LOGOUT#")) {
+//                    es.removeUser(user, this);
+//                    socket.close();  
+//                }
+                if (message.equalsIgnoreCase(ProtocolStrings.LOGOUT) && message.length() >=7) {
                     es.removeUser(user, this);
-                    socket.close();
+                    socket.close();  
+                } else
+                if (message.length() >= 5 && message.substring(0, 5).equalsIgnoreCase(ProtocolStrings.SEND)) {
+                    message = message.substring(5, message.length());
+                    es.send(user, message);
+                } else {
+                    writer.println("You must enter a keyword before typing i.e: SEND#, USERS#, LOGOUT#");
                 }
-                es.send(user, message);
+                
+                
             }
             writer.println(ProtocolStrings.STOP);//Echo the stop message back to the client for a nice closedown
             es.removeUser(user, this);
