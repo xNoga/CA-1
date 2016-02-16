@@ -10,7 +10,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -124,10 +123,12 @@ public class EchoServer extends Thread{
             //String ip = args[0];
             //int port = Integer.parseInt(args[1]);
             String ip = "localhost"; // ændret her -----------------!!!!!!!!!!!!!!!!!!!!!
+           
             int port = 9999;
             new EchoServer().runServer(ip, port);
+            System.out.println(ip.length());
         } finally {
             Log.closeLogger();
         }
-    }
+    } 
 }

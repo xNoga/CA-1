@@ -27,7 +27,7 @@ public class ClientHandler extends Thread {
     PrintWriter writer;
     protected Socket socket;
     String user;
-    
+
     EchoServer es;
 
     public ClientHandler(Socket socket, EchoServer es) throws IOException {
@@ -37,45 +37,45 @@ public class ClientHandler extends Thread {
         writer = new PrintWriter(socket.getOutputStream(), true);
     }
 
-    public void send(String message){
+    public void send(String message) {
         writer.println(message);
     }
-    
-    public void conInfo(ArrayList<String> clients, String user){
+
+    public void conInfo(ArrayList<String> clients, String user) {
         writer.println(user + " has connected to the server.");
         writer.print("USERS# ");
         for (String f : clients) {
             writer.print(f + ", ");
         }
         writer.println("\n");
- 
+
     }
-    
-    public void disconInfo(ArrayList<String> clients, String user){
+
+    public void disconInfo(ArrayList<String> clients, String user) {
         writer.println(user + " has disconnected from the server.");
         writer.print("USERS# ");
         for (String f : clients) {
             writer.print(f + ", ");
         }
         writer.println("\n");
- 
+
     }
 
     @Override
     public void run() {
-        
+
         try {
             writer.println("Please login by typing 'user#yourname'");
             String message = input.nextLine(); //IMPORTANT blocking call
             if (message.length() < 5) {
                 //writer.println("You must login by typing 'user#yourname'");
                 run();
-            } 
+            }
             if (message.substring(0, 5).equalsIgnoreCase("user#")) {
                 user = message.substring(5, message.length());
                 es.addUser(user, this);
-                
-            } else{
+
+            } else {
                 // writer.println("You must login by typing 'user#yourname'");
                 run();
             }
@@ -85,7 +85,11 @@ public class ClientHandler extends Thread {
                 // es.send(user, message);
                 System.out.println(String.format("Received the message: %1$S ", message.toUpperCase()));
                 message = input.nextLine(); //IMPORTANT blocking call
-                es.send(user, message);   
+                if (message.length() >= 7 && message.equalsIgnoreCase("LOGOUT#")) {
+                    es.removeUser(user, this);
+                    socket.close();
+                }
+                es.send(user, message);
             }
             writer.println(ProtocolStrings.STOP);//Echo the stop message back to the client for a nice closedown
             es.removeUser(user, this);
@@ -96,6 +100,5 @@ public class ClientHandler extends Thread {
             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
+
 }
