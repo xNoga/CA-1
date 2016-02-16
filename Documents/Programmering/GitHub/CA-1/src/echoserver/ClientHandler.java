@@ -41,8 +41,14 @@ public class ClientHandler extends Thread {
         writer.println(message);
     }
     
-    public void conInfo(){
-        
+    public void conInfo(ArrayList<String> clients, String user){
+        writer.println(user + " has connected to the server.");
+        writer.print("USERS# ");
+        for (String f : clients) {
+            writer.print(f + ", ");
+        }
+        writer.println("\n");
+ 
     }
 
     @Override
@@ -51,19 +57,25 @@ public class ClientHandler extends Thread {
         try {
             writer.println("Please login by typing 'user#yourname'");
             String message = input.nextLine(); //IMPORTANT blocking call
+            if (message.length() < 5) {
+                //writer.println("You must login by typing 'user#yourname'");
+                run();
+            } 
             if (message.substring(0, 5).equalsIgnoreCase("user#")) {
-                es.addUser(message, this);
                 user = message.substring(5, message.length());
+                es.addUser(user, this);
+                
             } else{
-                writer.println("You must login by typing 'user#yourname'");
-                socket.close();
+                // writer.println("You must login by typing 'user#yourname'");
+                run();
             }
             message = "";
             System.out.println(String.format("Received the message: %1$S ", message));
             while (!message.equals(ProtocolStrings.STOP)) {
-                es.send(user, message);
+                // es.send(user, message);
                 System.out.println(String.format("Received the message: %1$S ", message.toUpperCase()));
                 message = input.nextLine(); //IMPORTANT blocking call
+                es.send(user, message);
                
                 
             }

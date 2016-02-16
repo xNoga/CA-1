@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,6 +25,7 @@ public class EchoServer extends Thread{
     private String ip;
     private int port;
     HashMap <String, ClientHandler> clients = new HashMap<>();
+    ArrayList<String> connectedClients = new ArrayList();
 
     public static void stopServer() {
         keepRunning = false;
@@ -73,8 +75,12 @@ public class EchoServer extends Thread{
         clients.put(username, handler);
         
         for (Map.Entry<String, ClientHandler> entry : clients.entrySet() ) {
-            
+            connectedClients.add(entry.getKey());
         }
+        for (Map.Entry<String, ClientHandler> entry : clients.entrySet() ) {
+            entry.getValue().conInfo(connectedClients, username);
+        }
+        connectedClients.removeAll(connectedClients);
     }
     
     public void send(String user, String msg){
