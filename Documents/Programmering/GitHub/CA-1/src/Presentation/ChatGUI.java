@@ -6,7 +6,7 @@
 package Presentation;
 
 import echoclient.ClientObserver;
-import echoclient.ClientThread;
+import echoserver.ClientHandler;
 import echoclient.EchoClient;
 import echoserver.EchoServer;
 import java.io.IOException;
@@ -234,7 +234,7 @@ public class ChatGUI extends javax.swing.JFrame implements Observer {
         allPort = Integer.parseInt(getPortTextField.getText());
 
         try {
-            // es.start();
+            es.start();
             ec = new EchoClient();
             ec.connect(allIp, allPort);
             ec.addObserver(this);

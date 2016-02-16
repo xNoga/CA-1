@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package echoclient;
+package echoserver;
 
 import echoserver.EchoServer;
 import echoserver.Log;
@@ -21,31 +21,39 @@ import shared.ProtocolStrings;
  *
  * @author kristoffernoga
  */
-public class ClientThread extends Thread {
+public class ClientHandler extends Thread {
 
     Scanner input;
     PrintWriter writer;
     protected Socket socket;
-    EchoServer es = new EchoServer();
+    
+    EchoServer es;
 
-    public ClientThread(Socket socket) throws IOException {
+    public ClientHandler(Socket socket, EchoServer es) throws IOException {
+        this.es = es;
         this.socket = socket;
         input = new Scanner(socket.getInputStream());
         writer = new PrintWriter(socket.getOutputStream(), true);
     }
 
-    
+    public void send(String message){
+        writer.println(message);
+    }
 
     @Override
     public void run() {
         
         try {
             String message = input.nextLine(); //IMPORTANT blocking call
+            if (message.substring(0, 5).equalsIgnoreCase("user#")) {
+                es.addUser(message, this);
+            }
             System.out.println(String.format("Received the message: %1$S ", message));
             while (!message.equals(ProtocolStrings.STOP)) {
-                writer.println(message.toUpperCase());
+                es.send(message);
                 System.out.println(String.format("Received the message: %1$S ", message.toUpperCase()));
                 message = input.nextLine(); //IMPORTANT blocking call
+               
                 
             }
             writer.println(ProtocolStrings.STOP);//Echo the stop message back to the client for a nice closedown
@@ -53,7 +61,7 @@ public class ClientThread extends Thread {
             System.out.println("Closed a Connection");
             Logger.getLogger(Log.LOG_NAME).log(Level.INFO, "Closed a Connection");
         } catch (IOException ex) {
-            Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
