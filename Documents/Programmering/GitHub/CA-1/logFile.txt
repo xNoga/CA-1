@@ -1,4 +1,8 @@
-feb. 16, 2016 1:28:05 PM echoserver.EchoServer runServer
+feb. 16, 2016 1:41:30 PM echoserver.EchoServer runServer
 INFO: Server started. Listening on: 9999, bound to localhost
-feb. 16, 2016 1:28:09 PM echoserver.EchoServer runServer
+feb. 16, 2016 1:41:36 PM echoserver.EchoServer runServer
 INFO: Connected to a client
+feb. 16, 2016 1:41:46 PM echoserver.EchoServer runServer
+INFO: Connected to a client
+feb. 16, 2016 1:42:02 PM echoserver.ClientHandler run
+INFO: Closed a Connection

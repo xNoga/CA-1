@@ -71,6 +71,18 @@ public class EchoServer extends Thread{
         }
     }
     
+    public void removeUser(String username, ClientHandler handler){
+        clients.remove(username, handler);
+        
+        for (Map.Entry<String, ClientHandler> entry : clients.entrySet() ) {
+            connectedClients.add(entry.getKey());
+        }
+        for (Map.Entry<String, ClientHandler> entry : clients.entrySet() ) {
+            entry.getValue().disconInfo(connectedClients, username);
+        }
+        connectedClients.removeAll(connectedClients); 
+    }
+    
     public void addUser(String username, ClientHandler handler){
         clients.put(username, handler);
         
@@ -80,7 +92,7 @@ public class EchoServer extends Thread{
         for (Map.Entry<String, ClientHandler> entry : clients.entrySet() ) {
             entry.getValue().conInfo(connectedClients, username);
         }
-        connectedClients.removeAll(connectedClients);
+         connectedClients.removeAll(connectedClients);
     }
     
     public void send(String user, String msg){

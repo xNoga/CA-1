@@ -50,6 +50,16 @@ public class ClientHandler extends Thread {
         writer.println("\n");
  
     }
+    
+    public void disconInfo(ArrayList<String> clients, String user){
+        writer.println(user + " has disconnected from the server.");
+        writer.print("USERS# ");
+        for (String f : clients) {
+            writer.print(f + ", ");
+        }
+        writer.println("\n");
+ 
+    }
 
     @Override
     public void run() {
@@ -75,11 +85,10 @@ public class ClientHandler extends Thread {
                 // es.send(user, message);
                 System.out.println(String.format("Received the message: %1$S ", message.toUpperCase()));
                 message = input.nextLine(); //IMPORTANT blocking call
-                es.send(user, message);
-               
-                
+                es.send(user, message);   
             }
             writer.println(ProtocolStrings.STOP);//Echo the stop message back to the client for a nice closedown
+            es.removeUser(user, this);
             socket.close();
             System.out.println("Closed a Connection");
             Logger.getLogger(Log.LOG_NAME).log(Level.INFO, "Closed a Connection");
