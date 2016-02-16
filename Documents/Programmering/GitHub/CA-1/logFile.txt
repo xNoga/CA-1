@@ -1,0 +1,12 @@
+feb. 16, 2016 8:38:41 AM echoserver.EchoServer runServer
+INFO: Server started. Listening on: 9999, bound to 40.85.136.19
+feb. 16, 2016 8:38:41 AM echoserver.EchoServer runServer
+SEVERE: null
+java.net.BindException: Can't assign requested address
+	at java.net.PlainSocketImpl.socketBind(Native Method)
+	at java.net.AbstractPlainSocketImpl.bind(AbstractPlainSocketImpl.java:387)
+	at java.net.ServerSocket.bind(ServerSocket.java:375)
+	at java.net.ServerSocket.bind(ServerSocket.java:329)
+	at echoserver.EchoServer.runServer(EchoServer.java:53)
+	at echoserver.EchoServer.run(EchoServer.java:71)
+
