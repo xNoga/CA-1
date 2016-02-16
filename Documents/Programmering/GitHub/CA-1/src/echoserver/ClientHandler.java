@@ -26,6 +26,7 @@ public class ClientHandler extends Thread {
     Scanner input;
     PrintWriter writer;
     protected Socket socket;
+    String user;
     
     EchoServer es;
 
@@ -39,18 +40,28 @@ public class ClientHandler extends Thread {
     public void send(String message){
         writer.println(message);
     }
+    
+    public void conInfo(){
+        
+    }
 
     @Override
     public void run() {
         
         try {
+            writer.println("Please login by typing 'user#yourname'");
             String message = input.nextLine(); //IMPORTANT blocking call
             if (message.substring(0, 5).equalsIgnoreCase("user#")) {
                 es.addUser(message, this);
+                user = message.substring(5, message.length());
+            } else{
+                writer.println("You must login by typing 'user#yourname'");
+                socket.close();
             }
+            message = "";
             System.out.println(String.format("Received the message: %1$S ", message));
             while (!message.equals(ProtocolStrings.STOP)) {
-                es.send(message);
+                es.send(user, message);
                 System.out.println(String.format("Received the message: %1$S ", message.toUpperCase()));
                 message = input.nextLine(); //IMPORTANT blocking call
                

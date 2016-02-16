@@ -73,13 +73,14 @@ public class EchoServer extends Thread{
         clients.put(username, handler);
         
         for (Map.Entry<String, ClientHandler> entry : clients.entrySet() ) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
+            
         }
     }
     
-    public void send(String msg){
+    public void send(String user, String msg){
+        String message = "<" + user + ">" + " " + msg;
         for (Map.Entry<String, ClientHandler> entry : clients.entrySet() ) {
-            entry.getValue().send(msg);
+            entry.getValue().send(message);
         }    
     }
     
