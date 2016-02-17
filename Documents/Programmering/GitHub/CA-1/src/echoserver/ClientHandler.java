@@ -29,6 +29,8 @@ public class ClientHandler extends Thread {
     String user;
 
     EchoServer es;
+    
+    int count;
 
     public ClientHandler(Socket socket, EchoServer es) throws IOException, RuntimeException {
         this.es = es;
@@ -103,17 +105,19 @@ public class ClientHandler extends Thread {
             message = "";
             System.out.println(String.format("Received the message: %1$S ", message));
             while (!message.equals(ProtocolStrings.STOP)) {
-                // es.send(user, message);
+                
                 System.out.println(String.format("Received the message: %1$S ", message.toUpperCase()));
+                
                 message = input.nextLine(); //IMPORTANT blocking call
-//                if (message.length() >= 7 && message.equalsIgnoreCase("LOGOUT#")) {
-//                    es.removeUser(user, this);
-//                    socket.close();  
-//                }
+                for (int i = 0; i < message.length(); i++) {
+                    if (message.charAt(i) == '#') {
+                        count++;
+                    }
+                }
                 if (message.equalsIgnoreCase(ProtocolStrings.LOGOUT) && message.length() >=7) {
                     es.removeUser(user, this);
                     socket.close();  
-                } else if (message.length() >= 5 && message.substring(0, 5).equalsIgnoreCase(ProtocolStrings.SEND)) {
+                } else if (message.length() >= 5 && message.substring(0, 5).equalsIgnoreCase(ProtocolStrings.SEND) && count ==2) {
                     // message = message.substring(5, message.length());
                     es.send(user, message);
                 } else if(message.length() >= 6 && message.equalsIgnoreCase(ProtocolStrings.USERS)){
@@ -121,7 +125,7 @@ public class ClientHandler extends Thread {
                 } else {
                     writer.println("You must enter a keyword before typing: SEND#, USERS#, LOGOUT#");
                 }
-                
+                count = 0;
                 
             }
             writer.println(ProtocolStrings.STOP);//Echo the stop message back to the client for a nice closedown
