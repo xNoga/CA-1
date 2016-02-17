@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import shared.ProtocolStrings;
@@ -88,10 +89,33 @@ public class EchoServer extends Thread {
 
     public void send(String user, String msg) {
 
-        String message = "MESSAGE" + "#" + user + "#" + msg;
-        for (Map.Entry<String, ClientHandler> entry : clients.entrySet()) {
-            entry.getValue().send(message);
+        String[] msgArray = msg.trim().split("#");
+        String receivers = msgArray[1];
+        String message = msgArray[2];
+        String[] receiverList = receivers.trim().split(",");
+        
+        if (receivers.equalsIgnoreCase("*")) {
+            String sendMessage = "MESSAGE" + "#" + user + "#" + message;
+            for (Map.Entry<String, ClientHandler> entry : clients.entrySet()) {
+                entry.getValue().send(sendMessage);
+            }
+            
+        } 
+        
+        if (receiverList.length >= 1 && !receiverList[0].equalsIgnoreCase("*")) {
+            String sendMessage = "MESSAGE" + "#" + user + "#" + message;
+            for (Map.Entry<String, ClientHandler> entry : clients.entrySet()) {
+                for (int i = 0; i < receiverList.length; i++) {
+                    if (entry.getKey().equalsIgnoreCase(receiverList[i])) {
+                        entry.getValue().send(sendMessage);
+                    }
+                } 
+            }
         }
+//        String sendMessage = "MESSAGE" + "#" + user + "#" + msg;
+//        for (Map.Entry<String, ClientHandler> entry : clients.entrySet()) {
+//            entry.getValue().send(sendMessage);
+//        }
     }
 
     @Override

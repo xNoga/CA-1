@@ -114,7 +114,7 @@ public class ClientHandler extends Thread {
                     es.removeUser(user, this);
                     socket.close();  
                 } else if (message.length() >= 5 && message.substring(0, 5).equalsIgnoreCase(ProtocolStrings.SEND)) {
-                    message = message.substring(5, message.length());
+                    // message = message.substring(5, message.length());
                     es.send(user, message);
                 } else if(message.length() >= 6 && message.equalsIgnoreCase(ProtocolStrings.USERS)){
                     es.currentUsers(user, this);
