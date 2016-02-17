@@ -40,6 +40,19 @@ public class ClientHandler extends Thread {
     public void send(String message) {
         writer.println(message);
     }
+    
+    public void currentUsers(ArrayList<String> clients, String user){
+        writer.print("USERS# ");
+        for (int index = 0; index < clients.size(); index++) {
+            String currElement = clients.get(index);
+            if (index == clients.size() -1) {
+                writer.print(currElement + ".");
+            } else {
+                writer.print(currElement + ", ");
+            }
+        }
+        writer.println("\n");
+    }
 
     public void conInfo(ArrayList<String> clients, String user) {
         writer.println(user + " has connected to the server.");
@@ -59,8 +72,13 @@ public class ClientHandler extends Thread {
     public void disconInfo(ArrayList<String> clients, String user) {
         writer.println(user + " has disconnected from the server.");
         writer.print("USERS# ");
-        for (String f : clients) {
-            writer.print(f + ", ");
+        for (int index = 0; index < clients.size(); index++) {
+            String currElement = clients.get(index);
+            if (index == clients.size() -1) {
+                writer.print(currElement + ".");
+            } else {
+                writer.print(currElement + ", ");
+            }
         }
         writer.println("\n");
 
@@ -95,12 +113,13 @@ public class ClientHandler extends Thread {
                 if (message.equalsIgnoreCase(ProtocolStrings.LOGOUT) && message.length() >=7) {
                     es.removeUser(user, this);
                     socket.close();  
-                } else
-                if (message.length() >= 5 && message.substring(0, 5).equalsIgnoreCase(ProtocolStrings.SEND)) {
+                } else if (message.length() >= 5 && message.substring(0, 5).equalsIgnoreCase(ProtocolStrings.SEND)) {
                     message = message.substring(5, message.length());
                     es.send(user, message);
+                } else if(message.length() >= 6 && message.equalsIgnoreCase(ProtocolStrings.USERS)){
+                    es.currentUsers(user, this);
                 } else {
-                    writer.println("You must enter a keyword before typing i.e: SEND#, USERS#, LOGOUT#");
+                    writer.println("You must enter a keyword before typing: SEND#, USERS#, LOGOUT#");
                 }
                 
                 
