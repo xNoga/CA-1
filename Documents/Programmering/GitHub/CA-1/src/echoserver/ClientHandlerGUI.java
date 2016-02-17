@@ -5,6 +5,7 @@
  */
 package echoserver;
 
+import echoclient.EchoClient;
 import echoserver.EchoServer;
 import echoserver.Log;
 import java.io.IOException;
@@ -21,7 +22,7 @@ import shared.ProtocolStrings;
  *
  * @author kristoffernoga
  */
-public class ClientHandler extends Thread {
+public class ClientHandlerGUI extends Thread {
 
     Scanner input;
     PrintWriter writer;
@@ -29,10 +30,11 @@ public class ClientHandler extends Thread {
     String user;
 
     EchoServer es;
-    
+    EchoClient ec = new EchoClient();
+
     int count;
 
-    public ClientHandler(Socket socket, EchoServer es) throws IOException, RuntimeException {
+    public ClientHandlerGUI(Socket socket, EchoServer es) throws IOException, RuntimeException {
         this.es = es;
         this.socket = socket;
         input = new Scanner(socket.getInputStream());
@@ -42,12 +44,11 @@ public class ClientHandler extends Thread {
     public void send(String message) {
         writer.println(message);
     }
-    
-    public void currentUsers(ArrayList<String> clients, String user){
-        writer.print("USERS# ");
+
+    public void currentUsers(ArrayList<String> clients, String user) {
         for (int index = 0; index < clients.size(); index++) {
             String currElement = clients.get(index);
-            if (index == clients.size() -1) {
+            if (index == clients.size() - 1) {
                 writer.print(currElement + ".");
             } else {
                 writer.print(currElement + ", ");
@@ -57,26 +58,20 @@ public class ClientHandler extends Thread {
     }
 
     public void conInfo(ArrayList<String> clients, String user) {
-        writer.println(user + " has connected to the server.");
-        writer.print("USERS# ");
-        for (int index = 0; index < clients.size(); index++) {
-            String currElement = clients.get(index);
-            if (index == clients.size() -1) {
-                writer.print(currElement + ".");
-            } else {
-                writer.print(currElement + ", ");
-            }
+        String users = "USERS#";
+        //writer.println("USERS#");
+        for (String f : clients) {
+            users = users + f +",";
         }
-        writer.println("\n");
-
+        System.out.println(users);
+          // writer.println("\n");
+          writer.println(users);
     }
 
     public void disconInfo(ArrayList<String> clients, String user) {
-        writer.println(user + " has disconnected from the server.");
-        writer.print("USERS# ");
         for (int index = 0; index < clients.size(); index++) {
             String currElement = clients.get(index);
-            if (index == clients.size() -1) {
+            if (index == clients.size() - 1) {
                 writer.print(currElement + ".");
             } else {
                 writer.print(currElement + ", ");
@@ -90,43 +85,30 @@ public class ClientHandler extends Thread {
     public void run() {
 
         try {
-            writer.println("Please login by typing 'user#yourname'");
             String message = input.nextLine(); //IMPORTANT blocking call
-            if (message.length() < 5) {
-                run();
+            user = message.substring(5, message.length());
+            if (message.length() >= 5 && message.substring(0, 5).equalsIgnoreCase(ProtocolStrings.USER)) {
+                es.addUser(message, this);
+            } else {
+                socket.close();
             }
-            if (message.substring(0, 5).equalsIgnoreCase("user#")) {
-                user = message.substring(5, message.length());
-                es.addUser(user, this);
-
-            } else {               
-                run();
-            }
-            message = "";
+            // message = "";
             System.out.println(String.format("Received the message: %1$S ", message));
+
             while (!message.equals(ProtocolStrings.STOP)) {
-                
+
                 System.out.println(String.format("Received the message: %1$S ", message.toUpperCase()));
-                
+
                 message = input.nextLine(); //IMPORTANT blocking call
-                for (int i = 0; i < message.length(); i++) {
-                    if (message.charAt(i) == '#') {
-                        count++;
-                    }
-                }
-                if (message.equalsIgnoreCase(ProtocolStrings.LOGOUT) && message.length() >=7) {
+
+                if (message.length() >= 7 && message.equalsIgnoreCase(ProtocolStrings.LOGOUT)) {
                     es.removeUser(user, this);
-                    socket.close();  
-                } else if (message.length() >= 5 && message.substring(0, 5).equalsIgnoreCase(ProtocolStrings.SEND) && count ==2) {
+                    socket.close();
+                } else if (message.length() >= 5 && message.substring(0, 5).equalsIgnoreCase(ProtocolStrings.SEND)) {
                     // message = message.substring(5, message.length());
                     es.send(user, message);
-                } else if(message.length() >= 6 && message.equalsIgnoreCase(ProtocolStrings.USERS)){
-                    es.currentUsers(user, this);
-                } else {
-                    writer.println("You must enter a keyword before typing: SEND#, USERS#, LOGOUT#");
                 }
-                count = 0;
-                
+
             }
             writer.println(ProtocolStrings.STOP);//Echo the stop message back to the client for a nice closedown
             es.removeUser(user, this);
@@ -134,7 +116,7 @@ public class ClientHandler extends Thread {
             System.out.println("Closed a Connection");
             Logger.getLogger(Log.LOG_NAME).log(Level.INFO, "Closed a Connection");
         } catch (IOException ex) {
-            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientHandlerGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

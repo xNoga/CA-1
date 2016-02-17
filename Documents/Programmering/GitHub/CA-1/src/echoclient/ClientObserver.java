@@ -10,5 +10,6 @@ package echoclient;
  * @author kristoffernoga
  */
 public interface ClientObserver {
-    void update(String message);
+    void sendMessage(String message);
+    void updateList(String users);
 }

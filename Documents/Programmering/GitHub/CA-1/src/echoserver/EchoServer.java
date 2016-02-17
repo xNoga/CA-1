@@ -24,7 +24,7 @@ public class EchoServer extends Thread {
     private PrintWriter output;
     private String ip;
     private int port;
-    HashMap<String, ClientHandler> clients = new HashMap<>();
+    HashMap<String, ClientHandlerGUI> clients = new HashMap<>();
     ArrayList<String> connectedClients = new ArrayList();
 
     public static void stopServer() {
@@ -47,42 +47,44 @@ public class EchoServer extends Thread {
                 System.out.println("Connected to a client");
                 Logger.getLogger(Log.LOG_NAME).log(Level.INFO, "Connected to a client");
                 //handleClient(socket);
-                new ClientHandler(socket, this).start();
+                new ClientHandlerGUI(socket, this).start();
             } while (keepRunning);
         } catch (IOException ex) {
             Logger.getLogger(Log.LOG_NAME).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void removeUser(String username, ClientHandler handler) {
+    public void removeUser(String username, ClientHandlerGUI handler) {
         clients.remove(username, handler);
 
-        for (Map.Entry<String, ClientHandler> entry : clients.entrySet()) {
+        for (Map.Entry<String, ClientHandlerGUI> entry : clients.entrySet()) {
             connectedClients.add(entry.getKey());
         }
-        for (Map.Entry<String, ClientHandler> entry : clients.entrySet()) {
-            entry.getValue().disconInfo(connectedClients, username);
-        }
-        connectedClients.removeAll(connectedClients);
-    }
-
-    public void addUser(String username, ClientHandler handler) {
-        clients.put(username, handler);
-
-        for (Map.Entry<String, ClientHandler> entry : clients.entrySet()) {
-            connectedClients.add(entry.getKey());
-        }
-        for (Map.Entry<String, ClientHandler> entry : clients.entrySet()) {
+        for (Map.Entry<String, ClientHandlerGUI> entry : clients.entrySet()) {
             entry.getValue().conInfo(connectedClients, username);
         }
         connectedClients.removeAll(connectedClients);
     }
 
-    public void currentUsers(String username, ClientHandler handler) {
-        for (Map.Entry<String, ClientHandler> entry : clients.entrySet()) {
+    public void addUser(String username, ClientHandlerGUI handler) {
+        String user = username.substring(5,username.length());
+        clients.put(user, handler);
+
+        for (Map.Entry<String, ClientHandlerGUI> entry : clients.entrySet()) {
             connectedClients.add(entry.getKey());
         }
-        for (Map.Entry<String, ClientHandler> entry : clients.entrySet()) {
+        for (Map.Entry<String, ClientHandlerGUI> entry : clients.entrySet()) {
+            entry.getValue().conInfo(connectedClients, user);
+        }
+        connectedClients.removeAll(connectedClients);
+        System.out.println("Succes adding client.");
+    }
+
+    public void currentUsers(String username, ClientHandlerGUI handler) {
+        for (Map.Entry<String, ClientHandlerGUI> entry : clients.entrySet()) {
+            connectedClients.add(entry.getKey());
+        }
+        for (Map.Entry<String, ClientHandlerGUI> entry : clients.entrySet()) {
             entry.getValue().currentUsers(connectedClients, username);
         }
     }
@@ -96,7 +98,7 @@ public class EchoServer extends Thread {
         
         if (receivers.equalsIgnoreCase("*")) {
             String sendMessage = "MESSAGE" + "#" + user + "#" + message;
-            for (Map.Entry<String, ClientHandler> entry : clients.entrySet()) {
+            for (Map.Entry<String, ClientHandlerGUI> entry : clients.entrySet()) {
                 entry.getValue().send(sendMessage);
             }
             
@@ -104,7 +106,7 @@ public class EchoServer extends Thread {
         
         if (receiverList.length >= 1 && !receiverList[0].equalsIgnoreCase("*")) {
             String sendMessage = "MESSAGE" + "#" + user + "#" + message;
-            for (Map.Entry<String, ClientHandler> entry : clients.entrySet()) {
+            for (Map.Entry<String, ClientHandlerGUI> entry : clients.entrySet()) {
                 for (int i = 0; i < receiverList.length; i++) {
                     if (entry.getKey().equalsIgnoreCase(receiverList[i])) {
                         entry.getValue().send(sendMessage);
@@ -113,7 +115,7 @@ public class EchoServer extends Thread {
             }
         }
 //        String sendMessage = "MESSAGE" + "#" + user + "#" + msg;
-//        for (Map.Entry<String, ClientHandler> entry : clients.entrySet()) {
+//        for (Map.Entry<String, ClientHandlerGUI> entry : clients.entrySet()) {
 //            entry.getValue().send(sendMessage);
 //        }
     }
