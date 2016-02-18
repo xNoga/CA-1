@@ -23,7 +23,7 @@ import org.junit.Test;
  *
  * @author Eske Wolff
  */
-public class ServerTest implements ClientObserver {
+public class ServerTest {
 
     public ServerTest() {
     }
@@ -44,56 +44,76 @@ public class ServerTest implements ClientObserver {
         EchoServer.stopServer();
     }
 
-    private CountDownLatch lock = new CountDownLatch(1);
+       private CountDownLatch lock = new CountDownLatch(1);
     private CountDownLatch lock2 = new CountDownLatch(1);
-    String userResult = "";
+      private CountDownLatch lock3 = new CountDownLatch(1);
+    private CountDownLatch lock4 = new CountDownLatch(1);
+    String usersResult = "";
     String sendResult = "";
 
     @Test
-    public void send() throws InterruptedException {
+    public void test() throws InterruptedException {
+
         try {
             EchoClient client = new EchoClient();
-            
             client.connect("localhost", 9999);
-            client.registerClientObserver(this);
+            client.registerClientObserver(new ClientObserver() {
+                @Override
+                public void sendMessage(String message) {
+                    sendResult = message;
+                    lock2.countDown();
+                }
+
+                @Override
+                public void updateList(String users) {
+                    usersResult = users;
+                    lock.countDown();
+                }
+            });
             new Thread(client).start();
-            //Thread.sleep(2000);
+            Thread.sleep(2000);
             client.send("user#Test");
             lock.await(2000, TimeUnit.MILLISECONDS);
-            assertNotNull(userResult);
-            assertEquals("USERS#Test,", userResult);
-            
-            // Thread.sleep(5000);
+            assertNotNull(usersResult);
+            assertEquals("USERS#Test", usersResult);
             client.send("SEND#*#Hej med dig");
             lock2.await(2000, TimeUnit.MILLISECONDS);
             assertNotNull(sendResult);
             assertEquals("MESSAGE#Test#Hej med dig", sendResult);
-//            EchoClient client2 = new EchoClient();
-//            client2.connect("localhost", 9999);
-//            client2.send("user#Test2");
-//            assertEquals("USERS#Test,Test2,", userResult);
-            
-
+            client2();
+            Thread.sleep(2000);
+           assertEquals("USERS#Test", usersResult);
         } catch (IOException ex) {
             Logger.getLogger(ServerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
-    @Test
-    public void test2() throws InterruptedException{
-        EchoClient client2 = new EchoClient();
-        
-    }
 
-    @Override
-    public void sendMessage(String message) {
-        sendResult = message;
-        lock2.countDown();
-    }
+    public void client2() throws IOException {
+        try {
+            EchoClient client2 = new EchoClient();
+            client2.connect("localhost", 9999);
+            client2.registerClientObserver(new ClientObserver() {
+                @Override
+                public void sendMessage(String message) {
+                    sendResult = message;
+                    lock4.countDown();
+                }
 
-    @Override
-    public void updateList(String users) {
-        userResult = users;
-        lock.countDown();
+                @Override
+                public void updateList(String users) {
+                    usersResult = users;
+                    lock3.countDown();
+                }
+            });
+            new Thread(client2).start();
+            Thread.sleep(2000);
+            client2.send("USER#Test2");
+            lock3.await(2000, TimeUnit.MILLISECONDS);
+            assertEquals("USERS#Test,Test2", usersResult);
+            client2.send("logout#");
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ServerTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
