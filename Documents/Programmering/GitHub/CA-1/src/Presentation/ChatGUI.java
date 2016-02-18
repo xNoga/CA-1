@@ -30,17 +30,17 @@ import javax.swing.DefaultListModel;
 public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
 
     EchoServer es = new EchoServer();
-    
+
     static EchoClient ec;
     Lock lock = new ReentrantLock();
-    
+
     public static String allIp;
     public static int allPort;
-    
+
     DefaultListModel model1 = new DefaultListModel();
 
     public ChatGUI() {
-       // es.start();
+        // es.start();
         initComponents();
         userList.setModel(model1);
         model1.addElement("");
@@ -64,6 +64,7 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         userNameTextField = new javax.swing.JTextField();
+        jProgressBar1 = new javax.swing.JProgressBar();
         SendButton = new javax.swing.JButton();
         CloseButton = new javax.swing.JButton();
         SendTextField = new javax.swing.JTextField();
@@ -72,8 +73,15 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
         RecieveTextField = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
         userList = new javax.swing.JList<>();
+        jButton1 = new javax.swing.JButton();
 
         jLabel1.setText("Please enter IP adress and port number below:");
+
+        getIPTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                getIPTextFieldFocusGained(evt);
+            }
+        });
 
         getPortTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -180,6 +188,13 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
         });
         jScrollPane2.setViewportView(userList);
 
+        jButton1.setText("Logout");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -191,14 +206,16 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
                     .addComponent(SendTextField))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(CloseButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(ConnectButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(SendButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addContainerGap())))
+                            .addComponent(SendButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(CloseButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -211,6 +228,8 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
                             .addComponent(SendTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(ConnectButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(SendButton)))
                         .addGap(29, 29, 29)
@@ -226,6 +245,7 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
     }// </editor-fold>//GEN-END:initComponents
 
     private void CloseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CloseButtonActionPerformed
+        ec.send("logout#");
         System.exit(0);
     }//GEN-LAST:event_CloseButtonActionPerformed
 
@@ -233,17 +253,20 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
 
         String message = SendTextField.getText();
         List<String> receivers = userList.getSelectedValuesList();
-        
-        String finalRec ="";
+
+        String finalRec = "";
         for (String s : receivers) {
-            finalRec = finalRec + s +",";
+            finalRec = finalRec + s + ",";
         }
         System.out.println("finalRec: " + finalRec);
         if (finalRec.equalsIgnoreCase("*,")) {
             finalRec = "*";
         }
-        ec.send("SEND#"+ finalRec + "#" +message);
-        SendTextField.setText("");
+        if (!finalRec.equalsIgnoreCase("")) {
+            ec.send("SEND#" + finalRec + "#" + message);
+            SendTextField.setText("");
+            RecieveTextField.append("<You> " + message + "\n");
+        }
 
 
     }//GEN-LAST:event_SendButtonActionPerformed
@@ -255,7 +278,7 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
     private void ConnectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectButtonActionPerformed
         jDialog1.setVisible(true);
         jDialog1.setSize(320, 220);
-        getIPTextField.setText("localhost");
+        getIPTextField.setText("cph-js226.cloudapp.net");
         getPortTextField.setText("9999");
         userNameTextField.setText("Kris");
     }//GEN-LAST:event_ConnectButtonActionPerformed
@@ -269,7 +292,7 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
         allPort = Integer.parseInt(getPortTextField.getText());
 
         try {
-            es.start();
+            // es.start();
             ec = new EchoClient();
             ec.connect(allIp, allPort);
             ec.registerClientObserver(this);
@@ -278,14 +301,20 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
             String username = userNameTextField.getText();
             ec.sendUser(username);
             //ec.send("USER#"+username);
-            
-            
-            
+
         } catch (IOException ex) {
             Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         jDialog1.dispose();
     }//GEN-LAST:event_OKConnectButtonActionPerformed
+
+    private void getIPTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_getIPTextFieldFocusGained
+
+    }//GEN-LAST:event_getIPTextFieldFocusGained
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        ec.send("logout#");
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -330,19 +359,19 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
     private javax.swing.JTextField SendTextField;
     private javax.swing.JTextField getIPTextField;
     private javax.swing.JTextField getPortTextField;
+    private javax.swing.JButton jButton1;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JList<String> userList;
     private javax.swing.JTextField userNameTextField;
     // End of variables declaration//GEN-END:variables
 
-   
-    
     @Override
     public void updateList(String users) {
         String[] userArray = users.trim().split("#");
@@ -354,21 +383,18 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
         for (String s : receiverList) {
             model1.addElement(s);
         }
-        
+
         //SendTextField.setText(users);
-        
     }
-    
+
     @Override
     public void sendMessage(String msg) {
         String[] msgArray = msg.trim().split("#");
         String user = msgArray[1];
         String message = msgArray[2];
         //String[] receiverList = receivers.trim().split(",");
-        RecieveTextField.append("<"+ user + "> "+message + "\n");
+        RecieveTextField.append("<" + user + "> " + message + "\n");
     }
-
-    
 
 //    @Override
 //    public void update(Observable o, Object arg) {

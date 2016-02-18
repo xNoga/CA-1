@@ -93,11 +93,11 @@ public class ClientHandlerGUI extends Thread {
                 socket.close();
             }
             // message = "";
-            System.out.println(String.format("Received the message: %1$S ", message));
+            //System.out.println(String.format("Received the message: %1$S ", message));
 
             while (!message.equals(ProtocolStrings.STOP)) {
 
-                System.out.println(String.format("Received the message: %1$S ", message.toUpperCase()));
+                //System.out.println(String.format("Received the message: %1$S ", message.toUpperCase()));
 
                 message = input.nextLine(); //IMPORTANT blocking call
 

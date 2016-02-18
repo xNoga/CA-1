@@ -77,7 +77,8 @@ public class EchoServer extends Thread {
             entry.getValue().conInfo(connectedClients, user);
         }
         connectedClients.removeAll(connectedClients);
-        System.out.println("Succes adding client.");
+        // System.out.println("Succes adding client.");
+        Logger.getLogger(Log.LOG_NAME).log(Level.INFO, "Succes adding client.");
     }
 
     public void currentUsers(String username, ClientHandlerGUI handler) {
@@ -114,10 +115,6 @@ public class EchoServer extends Thread {
                 } 
             }
         }
-//        String sendMessage = "MESSAGE" + "#" + user + "#" + msg;
-//        for (Map.Entry<String, ClientHandlerGUI> entry : clients.entrySet()) {
-//            entry.getValue().send(sendMessage);
-//        }
     }
 
     @Override
@@ -136,12 +133,11 @@ public class EchoServer extends Thread {
     public static void main(String[] args) {
         try {
             Log.setLogFile("logFile.txt", "ServerLog");
-            //String ip = args[0];
-            //int port = Integer.parseInt(args[1]);
-            String test = "send#hej";
-            String ip = "localhost"; // skal ændres til 10.0.0.4
-            System.out.println(test.substring(0, 4));
-            int port = 9999;
+            String ip = args[0];
+            int port = Integer.parseInt(args[1]);
+
+//            String ip = "localhost"; // skal ændres til 10.0.0.4           
+            //int port = 9999;
             new EchoServer().runServer(ip, port);
             System.out.println(ip.length());
         } finally {
