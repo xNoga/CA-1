@@ -22,6 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.DefaultListSelectionModel;
 
 /**
  *
@@ -40,6 +41,19 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
     public ChatGUI() {
         initComponents();
         userList.setModel(model1);
+        userList.setSelectionModel(new DefaultListSelectionModel()
+                {
+                    public void setSelectionInterval(int index0, int index1){
+                        if (super.isSelectedIndex(index0)) {
+                            super.removeSelectionInterval(index0, index1);
+                        } else {
+                            super.addSelectionInterval(index0, index1);
+                        }
+                    }
+                }
+        
+        
+        );
         model1.addElement("");
     }
 
@@ -242,7 +256,10 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
     }// </editor-fold>//GEN-END:initComponents
 
     private void CloseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CloseButtonActionPerformed
-        ec.send("logout#");
+        if (allPort >= 1) {
+            ec.send("logout#");
+        }
+        
         System.exit(0);
     }//GEN-LAST:event_CloseButtonActionPerformed
 
@@ -319,7 +336,10 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
     }//GEN-LAST:event_getIPTextFieldFocusGained
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        model1.removeAllElements();
         ec.send("logout#");
+        allPort = 0;
+        RecieveTextField.setText("");
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
