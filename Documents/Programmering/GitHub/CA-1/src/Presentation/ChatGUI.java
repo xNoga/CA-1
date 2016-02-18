@@ -29,8 +29,6 @@ import javax.swing.DefaultListModel;
  */
 public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
 
-    EchoServer es = new EchoServer();
-
     static EchoClient ec;
     Lock lock = new ReentrantLock();
 
@@ -40,7 +38,6 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
     DefaultListModel model1 = new DefaultListModel();
 
     public ChatGUI() {
-        // es.start();
         initComponents();
         userList.setModel(model1);
         model1.addElement("");
@@ -255,9 +252,18 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
         List<String> receivers = userList.getSelectedValuesList();
 
         String finalRec = "";
-        for (String s : receivers) {
-            finalRec = finalRec + s + ",";
+//        for (String s : receivers) {
+//            finalRec = finalRec + s + ",";
+//        }
+        for (int index = 0; index < receivers.size(); index++) {
+            String currElement = receivers.get(index);
+            if (index == receivers.size() - 1) {
+                finalRec = finalRec + currElement;
+            } else {
+                finalRec = finalRec + currElement + ",";
+            }
         }
+
         System.out.println("finalRec: " + finalRec);
         if (finalRec.equalsIgnoreCase("*,")) {
             finalRec = "*";
@@ -292,7 +298,7 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
         allPort = Integer.parseInt(getPortTextField.getText());
 
         try {
-            // es.start();
+
             ec = new EchoClient();
             ec.connect(allIp, allPort);
             ec.registerClientObserver(this);

@@ -60,11 +60,19 @@ public class ClientHandlerGUI extends Thread {
     public void conInfo(ArrayList<String> clients, String user) {
         String users = "USERS#";
         //writer.println("USERS#");
-        for (String f : clients) {
-            users = users + f +",";
-        }
-        System.out.println(users);
-          // writer.println("\n");
+//        for (String f : clients) {
+//            users = users + f +",";
+//        }       
+        for (int index = 0; index < clients.size(); index++) {
+            String currElement = clients.get(index);
+            if (index == clients.size() - 1) {
+                users = users + currElement;
+            } else {
+                users = users + currElement + ",";
+            }
+        }   
+          System.out.println(users);
+          Logger.getLogger(Log.LOG_NAME).log(Level.INFO, users);
           writer.println(users);
     }
 

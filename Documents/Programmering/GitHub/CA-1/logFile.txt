@@ -1,6 +1,6 @@
-feb. 18, 2016 12:09:17 PM echoserver.EchoServer runServer
+feb. 18, 2016 12:39:27 PM echoserver.EchoServer runServer
 INFO: Server started. Listening on: 9999, bound to Localhost
-feb. 18, 2016 12:09:17 PM echoserver.EchoServer runServer
+feb. 18, 2016 12:39:28 PM echoserver.EchoServer runServer
 INFO: Connected to a client
-feb. 18, 2016 12:09:19 PM echoserver.EchoServer addUser
+feb. 18, 2016 12:39:28 PM echoserver.EchoServer addUser
 INFO: Succes adding client.

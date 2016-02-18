@@ -91,7 +91,7 @@ public class EchoServer extends Thread {
     }
 
     public void send(String user, String msg) {
-
+        Logger.getLogger(Log.LOG_NAME).log(Level.INFO, msg);
         String[] msgArray = msg.trim().split("#");
         String receivers = msgArray[1];
         String message = msgArray[2];
