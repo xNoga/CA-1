@@ -11,11 +11,14 @@ import echoserver.EchoServer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -34,7 +37,8 @@ public class ServerTest implements ClientObserver{
         new Thread(new Runnable() {
             @Override
             public void run() {
-                EchoServer.main(null);
+                String[] args = {"Localhost", "9999"};
+                EchoServer.main(args);
             }
         }).start();
     }
@@ -72,7 +76,8 @@ public class ServerTest implements ClientObserver{
 //            Logger.getLogger(ServerTest.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 //    }
-    
+    private CountDownLatch lock = new CountDownLatch(1);
+    String result = "";
    @Test
     public void sendMessage() throws InterruptedException {
         try {
@@ -81,16 +86,16 @@ public class ServerTest implements ClientObserver{
             client.registerClientObserver(this);
             new Thread(client).start();
             Thread.sleep(2000);
-            client.send("user#Test");
-            Thread.sleep(1000);
-            assertEquals("USERS#Test,", this);
+            client.send("user#Test");     
+            lock.await(2000, TimeUnit.MILLISECONDS);
+            assertNotNull(result);
+            assertEquals("USERS#Test,", result);
             
         } catch (IOException ex) {
             Logger.getLogger(ServerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-      
-        
+           
     }
 
     // TODO add test methods here.
@@ -105,5 +110,7 @@ public class ServerTest implements ClientObserver{
 
     @Override
     public void updateList(String users) {
+        result = users;
+        lock.countDown();
     }
 }
