@@ -13,9 +13,11 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -43,16 +45,16 @@ public class ServerTest {
     public static void tearDownClass() {
         EchoServer.stopServer();
     }
-
-       private CountDownLatch lock = new CountDownLatch(1);
+    
+    private CountDownLatch lock = new CountDownLatch(1);
     private CountDownLatch lock2 = new CountDownLatch(1);
-      private CountDownLatch lock3 = new CountDownLatch(1);
+    private CountDownLatch lock3 = new CountDownLatch(1);
     private CountDownLatch lock4 = new CountDownLatch(1);
     String usersResult = "";
     String sendResult = "";
 
     @Test
-    public void test() throws InterruptedException {
+    public void testEchoClient() throws InterruptedException {
 
         try {
             EchoClient client = new EchoClient();
@@ -71,7 +73,7 @@ public class ServerTest {
                 }
             });
             new Thread(client).start();
-            Thread.sleep(2000);
+            Thread.sleep(1000);
             client.send("user#Test");
             lock.await(2000, TimeUnit.MILLISECONDS);
             assertNotNull(usersResult);
@@ -80,20 +82,19 @@ public class ServerTest {
             lock2.await(2000, TimeUnit.MILLISECONDS);
             assertNotNull(sendResult);
             assertEquals("MESSAGE#Test#Hej med dig", sendResult);
-            client2();
-            Thread.sleep(2000);
-           assertEquals("USERS#Test", usersResult);
+            client.send("logout#");
         } catch (IOException ex) {
             Logger.getLogger(ServerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
-    public void client2() throws IOException {
+    @Test
+    public void testServerTwoClients() throws InterruptedException {
         try {
+            EchoClient client = new EchoClient();
             EchoClient client2 = new EchoClient();
-            client2.connect("localhost", 9999);
-            client2.registerClientObserver(new ClientObserver() {
+            client.connect("localhost", 9999);
+            client.registerClientObserver(new ClientObserver() {
                 @Override
                 public void sendMessage(String message) {
                     sendResult = message;
@@ -102,17 +103,28 @@ public class ServerTest {
 
                 @Override
                 public void updateList(String users) {
+                    System.out.println("xxx: " + users);
                     usersResult = users;
                     lock3.countDown();
                 }
             });
-            new Thread(client2).start();
-            Thread.sleep(2000);
-            client2.send("USER#Test2");
+            new Thread(client).start();
+            Thread.sleep(1000);
+            client.send("user#Test");
             lock3.await(2000, TimeUnit.MILLISECONDS);
+            assertNotNull(usersResult);
+            assertEquals("USERS#Test", usersResult);
+            client2.connect("localhost", 9999);
+            client2.send("user#Test2");
+            Thread.sleep(1000);
+            assertNotNull(usersResult);
             assertEquals("USERS#Test,Test2", usersResult);
             client2.send("logout#");
-        } catch (InterruptedException ex) {
+            Thread.sleep(1000);
+            assertNotNull(usersResult);
+            assertEquals("USERS#Test", usersResult);
+            client.send("logout#");
+        } catch (IOException ex) {
             Logger.getLogger(ServerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
