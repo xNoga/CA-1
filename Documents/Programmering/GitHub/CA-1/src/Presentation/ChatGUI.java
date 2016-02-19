@@ -254,7 +254,7 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
 
     private void CloseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CloseButtonActionPerformed
         if (allPort >= 1) {
-            ec.send("logout#");
+            ec.send("LOGOUT#");
         }
         
         System.exit(0);
@@ -266,9 +266,7 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
         List<String> receivers = userList.getSelectedValuesList();
 
         String finalRec = "";
-//        for (String s : receivers) {
-//            finalRec = finalRec + s + ",";
-//        }
+
         for (int index = 0; index < receivers.size(); index++) {
             String currElement = receivers.get(index);
             if (index == receivers.size() - 1) {
@@ -334,7 +332,7 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         model1.removeAllElements();
-        ec.send("logout#");
+        ec.send("LOGOUT#");
         allPort = 0;
         RecieveTextField.setText("");
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -350,7 +348,7 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Windows".equals(info.getName())) {
+                if ("Mac OS X".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -406,8 +404,6 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
         for (String s : receiverList) {
             model1.addElement(s);
         }
-
-        //SendTextField.setText(users);
     }
 
     @Override
@@ -419,16 +415,4 @@ public class ChatGUI extends javax.swing.JFrame implements ClientObserver {
         RecieveTextField.append("<" + user + "> " + message + "\n");
     }
 
-//    @Override
-//    public void update(Observable o, Object arg) {
-//        
-//        String message = (String) arg;
-//        if (message.substring(0, 6).equalsIgnoreCase("users#")) {
-//            model1.addElement(message);
-//        }
-//        
-//         RecieveTextField.append(message + "\n");
-//        
-//
-//    }
 }

@@ -13,11 +13,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -74,7 +72,7 @@ public class ServerTest {
             });
             new Thread(client).start();
             Thread.sleep(1000);
-            client.send("user#Test");
+            client.send("USER#Test");
             lock.await(2000, TimeUnit.MILLISECONDS);
             assertNotNull(usersResult);
             assertEquals("USERS#Test", usersResult);
@@ -82,7 +80,7 @@ public class ServerTest {
             lock2.await(2000, TimeUnit.MILLISECONDS);
             assertNotNull(sendResult);
             assertEquals("MESSAGE#Test#Hej med dig", sendResult);
-            client.send("logout#");
+            client.send("LOGOUT#");
         } catch (IOException ex) {
             Logger.getLogger(ServerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -110,20 +108,20 @@ public class ServerTest {
             });
             new Thread(client).start();
             Thread.sleep(1000);
-            client.send("user#Test");
+            client.send("USER#Test");
             lock3.await(2000, TimeUnit.MILLISECONDS);
             assertNotNull(usersResult);
             assertEquals("USERS#Test", usersResult);
             client2.connect("localhost", 9999);
-            client2.send("user#Test2");
+            client2.send("USER#Test2");
             Thread.sleep(1000);
             assertNotNull(usersResult);
             assertEquals("USERS#Test,Test2", usersResult);
-            client2.send("logout#");
+            client2.send("LOGOUT#");
             Thread.sleep(1000);
             assertNotNull(usersResult);
             assertEquals("USERS#Test", usersResult);
-            client.send("logout#");
+            client.send("LOGOUT#");
         } catch (IOException ex) {
             Logger.getLogger(ServerTest.class.getName()).log(Level.SEVERE, null, ex);
         }

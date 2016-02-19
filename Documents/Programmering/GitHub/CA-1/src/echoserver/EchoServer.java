@@ -81,15 +81,6 @@ public class EchoServer extends Thread {
         Logger.getLogger(Log.LOG_NAME).log(Level.INFO, "Succes adding client.");
     }
 
-    public void currentUsers(String username, ClientHandlerGUI handler) {
-        for (Map.Entry<String, ClientHandlerGUI> entry : clients.entrySet()) {
-            connectedClients.add(entry.getKey());
-        }
-        for (Map.Entry<String, ClientHandlerGUI> entry : clients.entrySet()) {
-            entry.getValue().currentUsers(connectedClients, username);
-        }
-    }
-
     public void send(String user, String msg) {
         Logger.getLogger(Log.LOG_NAME).log(Level.INFO, msg);
         String[] msgArray = msg.trim().split("#");

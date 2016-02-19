@@ -45,24 +45,8 @@ public class ClientHandlerGUI extends Thread {
         writer.println(message);
     }
 
-    public void currentUsers(ArrayList<String> clients, String user) {
-        for (int index = 0; index < clients.size(); index++) {
-            String currElement = clients.get(index);
-            if (index == clients.size() - 1) {
-                writer.print(currElement + ".");
-            } else {
-                writer.print(currElement + ", ");
-            }
-        }
-        writer.println("\n");
-    }
-
     public void conInfo(ArrayList<String> clients, String user) {
-        String users = "USERS#";
-        //writer.println("USERS#");
-//        for (String f : clients) {
-//            users = users + f +",";
-//        }       
+        String users = "USERS#";    
         for (int index = 0; index < clients.size(); index++) {
             String currElement = clients.get(index);
             if (index == clients.size() - 1) {
@@ -76,19 +60,6 @@ public class ClientHandlerGUI extends Thread {
           writer.println(users);
     }
 
-    public void disconInfo(ArrayList<String> clients, String user) {
-        for (int index = 0; index < clients.size(); index++) {
-            String currElement = clients.get(index);
-            if (index == clients.size() - 1) {
-                writer.print(currElement + ".");
-            } else {
-                writer.print(currElement + ", ");
-            }
-        }
-        writer.println("\n");
-
-    }
-
     @Override
     public void run() {
 
@@ -100,12 +71,8 @@ public class ClientHandlerGUI extends Thread {
             } else {
                 socket.close();
             }
-            // message = "";
-            //System.out.println(String.format("Received the message: %1$S ", message));
 
             while (!message.equals(ProtocolStrings.STOP)) {
-
-                //System.out.println(String.format("Received the message: %1$S ", message.toUpperCase()));
 
                 message = input.nextLine(); //IMPORTANT blocking call
 
@@ -113,7 +80,6 @@ public class ClientHandlerGUI extends Thread {
                     es.removeUser(user, this);
                     socket.close();
                 } else if (message.length() >= 5 && message.substring(0, 5).equalsIgnoreCase(ProtocolStrings.SEND)) {
-                    // message = message.substring(5, message.length());
                     es.send(user, message);
                 }
 

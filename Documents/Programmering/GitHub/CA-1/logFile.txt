@@ -1,20 +1,26 @@
-feb. 18, 2016 1:37:32 PM echoserver.EchoServer runServer
+feb. 19, 2016 10:48:31 AM echoserver.EchoServer runServer
 INFO: Server started. Listening on: 9999, bound to Localhost
-feb. 18, 2016 1:37:33 PM echoserver.EchoServer runServer
+feb. 19, 2016 10:48:32 AM echoserver.EchoServer runServer
 INFO: Connected to a client
-feb. 18, 2016 1:37:35 PM echoserver.ClientHandlerGUI conInfo
+feb. 19, 2016 10:48:33 AM echoserver.ClientHandlerGUI conInfo
 INFO: USERS#Test
-feb. 18, 2016 1:37:35 PM echoserver.EchoServer addUser
+feb. 19, 2016 10:48:33 AM echoserver.EchoServer addUser
 INFO: Succes adding client.
-feb. 18, 2016 1:37:35 PM echoserver.EchoServer send
+feb. 19, 2016 10:48:33 AM echoserver.EchoServer runServer
+INFO: Connected to a client
+feb. 19, 2016 10:48:33 AM echoserver.ClientHandlerGUI conInfo
+INFO: USERS#Test,Test2
+feb. 19, 2016 10:48:33 AM echoserver.ClientHandlerGUI conInfo
+INFO: USERS#Test,Test2
+feb. 19, 2016 10:48:33 AM echoserver.EchoServer addUser
+INFO: Succes adding client.
+feb. 19, 2016 10:48:34 AM echoserver.ClientHandlerGUI conInfo
+INFO: USERS#Test
+feb. 19, 2016 10:48:36 AM echoserver.EchoServer runServer
+INFO: Connected to a client
+feb. 19, 2016 10:48:37 AM echoserver.ClientHandlerGUI conInfo
+INFO: USERS#Test
+feb. 19, 2016 10:48:37 AM echoserver.EchoServer addUser
+INFO: Succes adding client.
+feb. 19, 2016 10:48:37 AM echoserver.EchoServer send
 INFO: SEND#*#Hej med dig
-feb. 18, 2016 1:37:35 PM echoserver.EchoServer runServer
-INFO: Connected to a client
-feb. 18, 2016 1:37:37 PM echoserver.ClientHandlerGUI conInfo
-INFO: USERS#Test,Test2
-feb. 18, 2016 1:37:37 PM echoserver.ClientHandlerGUI conInfo
-INFO: USERS#Test,Test2
-feb. 18, 2016 1:37:37 PM echoserver.EchoServer addUser
-INFO: Succes adding client.
-feb. 18, 2016 1:37:37 PM echoserver.ClientHandlerGUI conInfo
-INFO: USERS#Test

@@ -1,7 +1,6 @@
 package echoclient;
 
-import Presentation.ChatGUI;
-import echoserver.EchoServer;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -9,7 +8,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
+
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -82,35 +81,6 @@ public class EchoClient implements Runnable {
         return msg;
     }
 
-//    public static void main(String[] args) {
-//        int port;
-//        String ip;
-//        if (args.length == 2) {
-//            ip = args[0];
-//            port = Integer.parseInt(args[1]);
-//        } else {
-//            port = 9999;
-//            ip = "localhost";
-//            //ip = "10.0.0.4";
-////       port = ChatGUI.allPort;
-////       ip = ChatGUI.allIp;
-//        }
-//        try {
-//            EchoClient tester = new EchoClient();
-//            tester.connect(ip, port);
-//            System.out.println("Sending 'Hello world'");
-//            tester.send("Hello World");
-//            System.out.println("Waiting for a reply");
-//            System.out.println("Received: " + tester.receive()); //Important Blocking call         
-//            tester.stop();
-//            //System.in.read();      
-//        } catch (UnknownHostException ex) {
-//            Logger.getLogger(EchoClient.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (IOException ex) {
-//            Logger.getLogger(EchoClient.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
-
     @Override
     public void run() {
         System.out.println("hej fra run");
@@ -124,8 +94,7 @@ public class EchoClient implements Runnable {
             } else  {
                 notifyObserversMessage(msg); 
             }
-            //setChanged();
-            //notifyObservers(msg);
+            
         }
 
     }
