@@ -24,7 +24,7 @@ import shared.ProtocolStrings;
  */
 public class ClientHandlerGUI extends Thread {
 
-    Scanner input;
+    Scanner input; 
     PrintWriter writer;
     protected Socket socket;
     String user;
